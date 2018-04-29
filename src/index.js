@@ -91,8 +91,14 @@ function returnCounter(number = 0) {
    returnArgumentsArray(1, 2, 3) вернет [1, 2, 3]
  */
 function returnArgumentsArray() {
-    return Array.from(arguments);
+    return [...arguments];
 }
+
+// or
+
+// function returnArgumentsArray() {
+//     return Array.from(arguments);
+// }
 //
 // // or (для IE)
 //
@@ -127,13 +133,19 @@ function returnArgumentsArray() {
 
    console.log(newSum()) выведет 6
  */
-function bindFunction(fn) {
-    let args = Array.from(arguments).slice(1);
-
-    return function () {
-        return fn.apply(this, args);
-    }
+function bindFunction(fn, ...args) {
+    return () => fn.apply(this, args);
 }
+
+// or
+
+// function bindFunction(fn) {
+//     let args = Array.from(arguments).slice(1);
+//
+//     return function () {
+//         return fn.apply(this, args);
+//     }
+// }
 
 export {
     returnFirstArgument,
