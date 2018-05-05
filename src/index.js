@@ -35,8 +35,11 @@ function map(array, fn) {
  Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
  */
 function reduce(array, fn, initial) {
-    for (let i = (initial !== undefined) ? 0 : 1; i < array.length; i++) {
+    let i = (initial !== undefined) ? 0 : 1;
+
+    while (i < array.length) {
         initial = fn((initial !== undefined) ? initial : array[0], array[i], i, array);
+        i++;
     }
 
     return initial;
@@ -60,17 +63,17 @@ function upperProps(obj) {
  Напишите аналог встроенного метода slice для работы с массивами
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
-function slice(array, from, to) {
+function slice(array, from = 0, to = array.length) {
     let result = [];
     const length = array.length;
 
-    if (typeof from === 'undefined' || -from > length) {
+    if (-from > length) {
         from = 0;
     } else if (from < 0) {
         from += length;
     }
 
-    if (typeof to === 'undefined' || to > length) {
+    if (to > length) {
         to = length;
     } else if (to < 0) {
         to += length;
