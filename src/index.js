@@ -28,7 +28,10 @@ function isAllTrue(array, fn) {
     let result = true;
 
     for (let i = 0; i < array.length; i++) {
-        result = fn(array[i]);
+        if (!fn(array[i])) {
+            result = false;
+            break;
+        }
     }
 
     return result;
@@ -91,7 +94,7 @@ function returnBadArguments(fn, ...args) {
         throw new Error('fn is not a function');
     }
 
-    let result = [];
+    const result = [];
 
     args.forEach((arg) => {
         try {
