@@ -54,9 +54,9 @@ function prepend(what, where) {
      следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
-    return Array.from(where.children).filter(child => {
+    return [...where.children].filter(child => {
         if (child.nextElementSibling) {
-            return child.nextElementSibling.tagName.toLowerCase() === 'p';
+            return child.nextElementSibling.tagName === 'P';
         }
     });
 }
@@ -90,6 +90,7 @@ function findError(where) {
 
     // or
     // return Array.from(where.children).map(child => child.innerText);
+    // return [...where.children].map(child => child.innerText);
 }
 
 /*
@@ -129,7 +130,7 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-    Array.from(where.childNodes).forEach(child => {
+    [...where.childNodes].forEach(child => {
         if (child.nodeType === 3) {
             child.remove();
         }
@@ -138,6 +139,17 @@ function deleteTextNodesRecursive(where) {
             deleteTextNodesRecursive(child);
         }
     });
+
+    // or
+    // for (const child of [...where.childNodes]) {
+    //     if (child.nodeType === 3) {
+    //         child.remove();
+    //     }
+    //
+    //     if (child.hasChildNodes()) {
+    //         deleteTextNodesRecursive(child);
+    //     }
+    // }
 }
 
 /*
