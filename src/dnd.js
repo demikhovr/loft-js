@@ -29,17 +29,18 @@ const homeworkContainer = document.querySelector('#homework-container');
 function createDiv() {
     const div = document.createElement('div');
 
-    div.style.position = 'absolute';
+    div.style.cssText = `
+    position: absolute;
+    background-color: #${getRandomColor()};
+    top: ${getRandomNumber(0, window.innerHeight - 100)}px;
+    left: ${getRandomNumber(0, window.innerWidth - 200)}px;
+    width: ${getRandomNumber(50, 200)}px;
+    height: ${getRandomNumber(50, 100)}px;
+    user-select: none;
+    cursor: move;
+    `;
     div.textContent = 'drag';
-    div.style.userSelect = 'none';
-    div.style.cursor = 'move';
-
     div.classList.add('draggable-div');
-    div.style.backgroundColor = `#${getRandomColor()}`;
-    div.style.top = `${getRandomNumber(0, 300)}px`;
-    div.style.left = `${getRandomNumber(0, 300)}px`;
-    div.style.width = `${getRandomNumber(50, 200)}px`;
-    div.style.height = `${getRandomNumber(50, 100)}px`;
 
     return div;
 }
