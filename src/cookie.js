@@ -101,17 +101,11 @@ function updateTable() {
 
     clearDOMNode(listTable);
 
-    if (filterValue.length) {
-        Object.keys(cookies).forEach(cookie => {
-            if (isMatching(cookie, filterValue) || isMatching(cookies[cookie], filterValue)) {
-                createTableRow(cookie, cookies[cookie]);
-            }
-        });
-    } else {
-        Object.keys(cookies).forEach(cookie => {
+    Object.keys(cookies).forEach(cookie => {
+        if (!filterValue.length || isMatching(cookie, filterValue) || isMatching(cookies[cookie], filterValue)) {
             createTableRow(cookie, cookies[cookie]);
-        });
-    }
+        }
+    });
 }
 
 function deleteBtnClickHandler() {
