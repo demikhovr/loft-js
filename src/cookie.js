@@ -51,7 +51,7 @@ function clearDOMNode(node) {
 }
 
 function isMatching(full, chunk) {
-    return full.toLowerCase().indexOf(chunk.toLowerCase()) !== -1;
+    return full.toLowerCase().includes(chunk.toLowerCase());
 }
 
 // Cookies
@@ -66,12 +66,40 @@ function getCookies() {
     }, {});
 }
 
-function createCookie(name, value) {
-    document.cookie = `${name}=${value}`;
-}
+function setCookie(name, value, options) {
+    options = options || {};
 
+    let expires = options.expires;
+
+    if (typeof expires === 'number' && expires) {
+        const cookieDate = new Date();
+
+        cookieDate.setTime(cookieDate.getTime() + expires * 1000);
+        expires = options.expires = cookieDate;
+    }
+    if (expires && expires.toUTCString) {
+        options.expires = expires.toUTCString();
+    }
+
+    value = encodeURIComponent(value);
+
+    var updatedCookie = name + '=' + value;
+
+    for (const propName in options) {
+        if (options.hasOwnProperty(propName)) {
+            const propValue = options[propName];
+
+            updatedCookie += '; ' + propName;
+            if (propValue !== true) {
+                updatedCookie += '=' + propValue;
+            }
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
 function deleteCookie(name) {
-    document.cookie = `${name}=''; expires=${new Date(0).toUTCString()}`;
+    setCookie(name, '', { expires: -1 });
 }
 
 function createTableRow(name, value) {
@@ -85,14 +113,15 @@ function createTableRow(name, value) {
     tdValue.textContent = value;
 
     deleteBtn.textContent = 'Удалить';
-    deleteBtn.addEventListener('click', deleteBtnClickHandler);
+    deleteBtn.dataset.cookieName = name;
+    deleteBtn.classList.add('delete-btn');
 
     tdDelete.appendChild(deleteBtn);
     tr.appendChild(tdName);
     tr.appendChild(tdValue);
     tr.appendChild(tdDelete);
 
-    listTable.appendChild(tr);
+    return tr;
 }
 
 function updateTable() {
@@ -101,27 +130,36 @@ function updateTable() {
 
     clearDOMNode(listTable);
 
+    if (document.cookie.length === 0) {
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
     Object.keys(cookies).forEach(cookie => {
         if (!filterValue.length || isMatching(cookie, filterValue) || isMatching(cookies[cookie], filterValue)) {
-            createTableRow(cookie, cookies[cookie]);
+            fragment.appendChild(createTableRow(cookie, cookies[cookie]));
         }
     });
+
+    listTable.appendChild(fragment);
 }
 
-function deleteBtnClickHandler() {
-    const currentTr = this.closest('tr');
-    const currentCookie = currentTr.querySelector('td:first-child');
+function listTableClickHandler(evt) {
+    const target = evt.target.closest('.delete-btn');
 
-    currentTr.remove();
-    deleteCookie(currentCookie.textContent);
+    if (target) {
+        deleteCookie(target.dataset.cookieName);
+        updateTable();
+    }
 }
 
 function addButtonClickHandler() {
     const name = addNameInput.value;
     const value = addValueInput.value;
 
-    if (name.length && value.length) {
-        createCookie(name, value);
+    if (name && value) {
+        setCookie(name, value);
         updateTable();
     } else {
         alert('Введите имя и значение cookie!');
@@ -131,3 +169,4 @@ function addButtonClickHandler() {
 updateTable();
 addButton.addEventListener('click', addButtonClickHandler);
 filterNameInput.addEventListener('keyup', updateTable);
+listTable.addEventListener('click', listTableClickHandler);
